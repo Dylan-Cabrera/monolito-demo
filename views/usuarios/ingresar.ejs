@@ -1,0 +1,11 @@
+<%- include('../parciales/cabecera', { titulo: 'Ingresar' }) %>
+<h1>Ingresar</h1>
+<form method="post" class="form caja" style="max-width:420px">
+  <input type="hidden" name="sig" value="<%= sig %>">
+  <% if (error) { %><p class="err" role="alert"><%= error %></p><% } %>
+  <div class="campo"><label for="u">Usuario</label><input id="u" name="usuario" autocomplete="username" required></div>
+  <div class="campo"><label for="c">Clave</label><input id="c" name="clave" type="password" autocomplete="current-password" required></div>
+  <div class="fila"><button class="btn">Ingresar</button><a href="/registro">Crear una cuenta</a></div>
+</form>
+<p class="intro">Para la demo: <b>don_ramon</b> (productor), <b>laura</b> (compradora), clave <b>demo1234</b>. Administrador: <b>admin</b> / <b>admin1234</b>.</p>
+<%- include('../parciales/pie') %>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title><%= typeof titulo !== 'undefined' ? titulo + ' · ' : '' %>Mercado Chacarero</title>
+<link rel="icon" type="image/png" href="/img/favicon.png"><rect x='11' y='3' width='10' height='26' fill='%23F4B13E'/></svg>">
+<link rel="stylesheet" href="/css/app.css">
+<% if (typeof extraHead !== 'undefined') { %><%- extraHead %><% } %>
+</head><body class="<%= typeof clase !== 'undefined' ? clase : '' %>">
+<header class="top"><div class="wrap">
+  <a class="marca" href="/"><img src="/img/escudo-formosa.png" alt="Escudo de la Provincia de Formosa" width="40" height="38">Mercado Chacarero</a>
+  <nav aria-label="Principal">
+    <% const a = (h) => ruta === h || (h !== '/' && ruta.startsWith(h)) ? 'activo' : ''; %>
+    <a class="<%= a('/productos') %>" href="/productos">Productos</a>
+    <% if (usuario) { %>
+      <% if (usuario.rol === 'PRODUCTOR') { %>
+        <a class="<%= a('/panel/productos') %>" href="/panel/productos">Mis productos</a>
+        <a class="<%= a('/panel/ventas') %>" href="/panel/ventas">Mis ventas</a>
+        <a class="<%= a('/panel/resumen') %>" href="/panel/resumen">Resumen</a>
+      <% } else { %><a class="<%= a('/mis-compras') %>" href="/mis-compras">Mis compras</a><% } %>
+      <% if (usuario.rol === 'ADMIN') { %><a class="<%= a('/tablero') %>" href="/tablero">Tablero</a><% } %>
+    <% } %>
+    <a class="<%= a('/carrito') %>" href="/carrito">Carrito (<%= carritoCantidad %>)</a>
+    <% if (usuario) { %>
+      <form method="post" action="/salir" style="display:inline"><button>Salir (<%= usuario.usuario %>)</button></form>
+    <% } else { %><a class="<%= a('/ingresar') %>" href="/ingresar">Ingresar</a><% } %>
+  </nav>
+</div></header>
+<main><div class="wrap">
+<% if (flash.length) { %><ul class="flash" role="status"><% flash.forEach(f => { %><li class="<%= f.tipo %>"><%= f.texto %></li><% }) %></ul><% } %>

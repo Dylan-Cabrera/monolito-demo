@@ -1,0 +1,13 @@
+<%- include('../parciales/cabecera', { titulo: 'Mis productos' }) %>
+<div class="fila entre"><h1>Mis productos</h1><a class="btn" href="/panel/productos/nuevo">Publicar producto</a></div>
+<% if (productos.length) { %>
+<div class="tabla-wrap"><table class="tabla"><tr><th>Producto</th><th>Precio</th><th>Stock</th><th>Estado</th><th></th></tr>
+<% productos.forEach(p => { %><tr>
+  <td><%= p.nombre %><br><span class="cat"><%= p.categoria %></span></td>
+  <td><%= pesos(p.precio) %> / <%= C.UNIDADES[p.unidad] %></td><td><%= p.stock %></td>
+  <td><%= p.activo ? 'Publicado' : 'Oculto' %></td>
+  <td><div class="fila"><a class="btn sec chico" href="/panel/productos/<%= p.id %>/editar">Editar</a>
+    <form method="post" action="/panel/productos/<%= p.id %>/borrar" onsubmit="return confirm('¿Eliminar este producto?')"><button class="btn mal chico">Eliminar</button></form></div></td>
+</tr><% }) %></table></div>
+<% } else { %><p class="vacio">Todavía no publicaste nada. Cargá tu primer producto y aparece en el catálogo al instante.</p><% } %>
+<%- include('../parciales/pie') %>

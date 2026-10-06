@@ -1,0 +1,5 @@
+<%- include('../parciales/cabecera', { titulo: 'Mis ventas' }) %>
+<h1>Mis ventas</h1>
+<% pedidos.forEach(p => { %><%- include('_pedido', { p, modo: 'venta' }) %><% }) %>
+<% if (!pedidos.length) { %><p class="vacio">Todavía no recibiste pedidos.</p><% } %>
+<%- include('../parciales/pie') %>

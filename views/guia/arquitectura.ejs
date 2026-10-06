@@ -1,0 +1,35 @@
+<%- include('../parciales/cabecera', { titulo: 'La arquitectura', clase: 'con-escena', extraHead: include('../parciales/escena_head') }) %>
+<div class="lienzo" id="lienzo"></div>
+<aside class="panel" id="panel" aria-label="Guía de la exposición">
+  <div class="progreso" role="tablist" aria-label="Pasos">
+    <% PASOS.forEach((p, i) => { %><button role="tab" aria-label="Paso <%= i + 1 %>: <%= p.titulo %>" data-ir="<%= i %>"></button><% }) %>
+  </div>
+  <div class="parte" id="parte"></div>
+  <div class="cuerpo" aria-live="polite">
+  <% PASOS.forEach((p, i) => { %>
+    <section class="paso" data-parte="<%= p.parte %>">
+      <h2><%= p.titulo %></h2>
+      <p><%= p.texto %></p>
+      <% if (p.puntos) { %><ul><% p.puntos.forEach(x => { %><li><%= x %></li><% }) %></ul><% } %>
+      <% if (p.codigo) { %><p>Carpeta: <span class="ruta-codigo"><%= p.codigo %></span></p><% } %>
+      <% if (p.fases) { %><ul class="fases"><% p.fases.forEach((f, k) => { %><li data-fase="<%= k %>"><%= f %></li><% }) %></ul><% } %>
+      <% if (p.demo) { %><div class="demo"><% p.demo.forEach(([t, u]) => { %><a class="btn sec" href="<%= u %>" target="_blank" rel="noopener"><%= t %></a><% }) %></div><% } %>
+      <% if (p.vivo === 'pid') { %><p class="vivo" style="margin-top:14px">En vivo: esta página la sirve el proceso <b>PID <span data-vivo="pid"><%= pid %></span></b>. El mismo que atiende el catálogo, los pedidos y los reportes.</p><% } %>
+      <% if (p.vivo === 'numeros') { %><div class="vivo"><p style="margin:0 0 8px">En vivo, desde PostgreSQL:</p><div class="nums">
+        <div><b data-vivo="productores"><%= pulso.productores %></b>productores</div>
+        <div><b data-vivo="productos"><%= pulso.productos %></b>productos</div>
+        <div><b data-vivo="pedidos"><%= pulso.pedidos %></b>pedidos</div>
+        <div><b data-vivo="vendido"><%= pesos(pulso.vendido) %></b>vendido</div></div></div><% } %>
+    </section>
+  <% }) %>
+  </div>
+  <div class="controles">
+    <span class="contador" id="contador"></span>
+    <button class="btn sec chico" id="ant">Anterior</button>
+    <button class="btn chico" id="sig">Siguiente</button>
+  </div>
+</aside>
+<div class="atajos"><kbd>←</kbd> <kbd>→</kbd> pasos, <kbd>H</kbd> ocultar panel, <kbd>F</kbd> pantalla completa</div>
+<script>window.GUIA = { partes: <%- JSON.stringify(PARTES) %>, escenas: <%- JSON.stringify(PASOS.map(p => p.escena)) %> };</script>
+<script type="module" src="/js/guia.js"></script>
+<%- include('../parciales/pie') %>

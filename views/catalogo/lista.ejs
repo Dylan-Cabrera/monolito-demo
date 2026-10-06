@@ -1,0 +1,27 @@
+<%- include('../parciales/cabecera', { titulo: 'Productos' }) %>
+<h1>Compra directo a quien lo cultiva</h1>
+<p class="intro">Sin intermediarios: el productor pone el precio y vos sabés de qué chacra viene.</p>
+<form class="filtros" method="get" role="search">
+  <input type="search" name="q" value="<%= f.q %>" placeholder="Buscá mandioca, miel, queso…" aria-label="Buscar productos">
+  <select name="categoria" aria-label="Categoría"><option value="">Todas las categorías</option>
+    <% categorias.forEach(c => { %><option value="<%= c.id %>" <%= f.categoria == c.id ? 'selected' : '' %>><%= c.nombre %></option><% }) %></select>
+  <select name="localidad" aria-label="Localidad"><option value="">Toda la provincia</option>
+    <% C.LOCALIDADES.forEach(l => { %><option <%= f.localidad === l ? 'selected' : '' %>><%= l %></option><% }) %></select>
+  <button class="btn">Filtrar</button>
+</form>
+<% if (productos.length) { %>
+<div class="grilla">
+<% productos.forEach(p => { %>
+  <article class="prod">
+    <span class="cat"><%= p.categoria %></span>
+    <h3><a href="/productos/<%= p.id %>"><%= p.nombre %></a></h3>
+    <div class="origen"><b><%= p.emprendimiento %></b>, <%= p.localidad %></div>
+    <div class="origen">Quedan <%= p.stock %></div>
+    <div class="precio"><%= pesos(p.precio) %> <small>por <%= C.UNIDADES[p.unidad] %></small></div>
+    <form method="post" action="/carrito/agregar/<%= p.id %>" class="fila">
+      <input type="number" name="cantidad" value="1" min="1" max="<%= p.stock %>" style="width:76px" aria-label="Cantidad de <%= p.nombre %>">
+      <button class="btn chico">Agregar al carrito</button></form>
+  </article>
+<% }) %></div>
+<% } else { %><p class="vacio">No hay productos con esos filtros. Probá otra localidad o categoría.</p><% } %>
+<%- include('../parciales/pie') %>

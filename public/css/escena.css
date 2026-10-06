@@ -1,0 +1,74 @@
+/* Páginas con escena 3D (portada y guía) */
+body.con-escena{overflow:hidden;height:100%}
+body.con-escena main{padding:0;position:relative}
+body.con-escena main>.wrap{max-width:none;padding:0}
+body.con-escena footer{display:none}
+body.con-escena .top{position:relative;z-index:5}
+.lienzo{position:fixed;inset:0;top:0;z-index:0}
+.lienzo canvas{display:block}
+.capa-etiquetas{position:absolute;inset:0;pointer-events:auto}
+.et{font:600 13px/1.2 var(--cuerpo);color:var(--texto);background:rgba(16,35,43,.82);padding:4px 9px;border-radius:3px;white-space:nowrap;transition:opacity .4s;pointer-events:none;border:1px solid rgba(111,163,176,.35)}
+.et.oculta{opacity:0}
+.et.pin{font-weight:400;font-size:12px;color:var(--suave);background:rgba(16,35,43,.6);border:0}
+.et.rio{background:none;border:0;color:#7cc6d3;font-style:italic;font-weight:400}
+.et.modulo{background:var(--pomelo);color:var(--rio);border:0}
+.et.fuerte{border-color:var(--pomelo);color:var(--pomelo);font-size:14px}
+.et.aviso{border-color:#9aa6a5;color:#d6dcdb}
+.et.alerta{border-color:var(--error);color:#fff;background:#8a2414}
+
+/* Portada */
+.portada{position:fixed;left:0;right:0;bottom:0;z-index:2;padding:0 0 clamp(24px,6vh,64px);pointer-events:none;
+  background:linear-gradient(to top,rgba(16,35,43,.95) 30%,rgba(16,35,43,0))}
+.portada .wrap{pointer-events:auto}
+.portada h1{font-size:clamp(3rem,10vw,8.5rem);font-stretch:75%;font-weight:800;line-height:.88;letter-spacing:-.02em;margin:0 0 .25em;max-width:9ch}
+.portada p{font-size:clamp(1rem,1.6vw,1.25rem);color:var(--suave);max-width:46ch;margin:0 0 22px}
+.pulso{display:flex;gap:clamp(18px,4vw,48px);margin:0 0 26px;flex-wrap:wrap}
+.pulso div{color:var(--suave);font-size:.9rem}
+.pulso b{display:block;font-family:var(--display);font-size:clamp(1.6rem,3vw,2.3rem);color:var(--texto);line-height:1}
+
+/* Guía */
+.panel{position:fixed;z-index:3;top:100px;right:18px;bottom:18px;width:min(420px,calc(100vw - 36px));display:flex;flex-direction:column;
+  background:rgba(16,35,43,.9);backdrop-filter:blur(6px);border:1px solid var(--linea);border-radius:6px;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s}
+.panel.escondido{transform:translateX(calc(100% + 30px));opacity:0}
+.progreso{display:flex;gap:6px;padding:16px 20px 0}
+.progreso button{flex:1;height:5px;border:0;padding:0;background:var(--rio-3);cursor:pointer;border-radius:2px;position:relative}
+.progreso button.hecho{background:rgba(244,177,62,.45)}
+.progreso button.actual{background:var(--pomelo)}
+.parte{padding:14px 20px 0;color:var(--pomelo);font-weight:600;font-size:.95rem}
+.cuerpo{flex:1;overflow-y:auto;padding:6px 20px 16px}
+.paso{display:none}
+.paso.visible{display:block;animation:entra .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes entra{from{opacity:0;transform:translateY(10px)}}
+.paso h2{font-size:clamp(1.6rem,2.4vw,2.1rem);margin:.2em 0 .5em;font-stretch:85%}
+.paso p{color:#d4ddd8;margin:0 0 14px}
+.paso ul{margin:0 0 14px;padding:0;list-style:none}
+.paso ul li{padding:7px 0 7px 18px;border-bottom:1px solid var(--rio-3);position:relative}
+.paso ul li::before{content:"";position:absolute;left:0;top:15px;width:7px;height:7px;background:var(--pomelo)}
+.fases li{color:var(--suave);transition:color .3s}
+.fases li.activa{color:var(--texto);font-weight:600}
+.fases li.activa::before{box-shadow:0 0 0 4px rgba(244,177,62,.3)}
+.vivo{background:var(--rio-2);padding:12px 14px;border-radius:4px;font-size:.92rem;color:var(--suave)}
+.vivo b{color:var(--pomelo)}
+.vivo .nums{margin:0;gap:10px}
+.vivo .nums b{font-size:1.6rem;color:var(--texto)}
+.demo{display:flex;flex-direction:column;gap:8px}
+.ruta-codigo{font-family:ui-monospace,Consolas,monospace;color:var(--pomelo)}
+.controles{display:flex;align-items:center;gap:10px;padding:14px 20px;border-top:1px solid var(--linea)}
+.controles .contador{margin-right:auto;color:var(--suave);font-size:.9rem}
+.atajos{position:fixed;z-index:3;left:18px;bottom:16px;color:var(--suave);font-size:.82rem;background:rgba(16,35,43,.7);padding:6px 10px;border-radius:4px}
+.atajos kbd{font:inherit;font-weight:600;color:var(--texto);border:1px solid var(--linea);border-radius:3px;padding:0 5px}
+.sin-webgl{position:fixed;inset:0;display:grid;place-items:center;padding:30px;text-align:center;color:var(--suave)}
+
+@media (max-width:760px){
+  .panel{top:auto;height:52vh;right:10px;left:10px;bottom:10px;width:auto}
+  .atajos{display:none}
+}
+@media (prefers-reduced-motion:reduce){.paso.visible{animation:none}.panel{transition:none}}
+
+/* Portada: amanecer en el monte */
+.lienzo.cielo{background:
+  radial-gradient(circle at 74% 66%,rgba(255,200,130,.5),rgba(255,200,130,0) 32%),
+  linear-gradient(#10232b 0%,#1b3a45 42%,#4f6560 72%,#b98352 100%)}
+.portada.lateral{top:0;bottom:0;display:flex;align-items:flex-end;
+  background:linear-gradient(90deg,rgba(16,35,43,.94) 0%,rgba(16,35,43,.75) 38%,rgba(16,35,43,0) 62%)}
+@media (max-width:900px){.portada.lateral{background:linear-gradient(to top,rgba(16,35,43,.96) 45%,rgba(16,35,43,0) 75%)}}

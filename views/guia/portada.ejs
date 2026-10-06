@@ -1,0 +1,18 @@
+<%- include('../parciales/cabecera', { titulo: 'Inicio', clase: 'con-escena', extraHead: include('../parciales/escena_head') }) %>
+<div class="lienzo cielo" id="lienzo" aria-hidden="true"></div>
+<section class="portada lateral"><div class="wrap">
+  <h1>Mercado Chacarero</h1>
+  <p>Del monte formoseño a tu mesa. Productores del interior venden directo, sin intermediarios, y ponen su propio precio.</p>
+  <div class="pulso">
+    <div><b><%= pulso.productores %></b>productores</div>
+    <div><b><%= pulso.localidades %></b>localidades</div>
+    <div><b><%= pulso.productos %></b>productos publicados</div>
+    <div><b><%= pesos(pulso.vendido) %></b>directo al productor</div>
+  </div>
+  <div class="fila"><a class="btn" href="/productos">Ver productos</a><a class="btn sec" href="/registro">Soy productor: quiero vender</a></div>
+</div></section>
+<script type="module">
+  import { crearHornero, hayWebGL } from '/js/hornero.js';
+  if (hayWebGL()) crearHornero(document.getElementById('lienzo'));
+</script>
+<%- include('../parciales/pie') %>

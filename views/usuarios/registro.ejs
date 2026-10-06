@@ -1,0 +1,23 @@
+<%- include('../parciales/cabecera', { titulo: 'Crear cuenta' }) %>
+<h1>Crear cuenta</h1>
+<% const err = (k) => errores[k] ? `<span class="err">${errores[k]}</span>` : ''; %>
+<form method="post" class="form caja">
+  <div class="campo"><span style="font-weight:600">¿Qué sos?</span><div class="radios">
+    <label><input type="radio" name="rol" value="COMPRADOR" <%= d.rol !== 'PRODUCTOR' ? 'checked' : '' %>> Comprador</label>
+    <label><input type="radio" name="rol" value="PRODUCTOR" <%= d.rol === 'PRODUCTOR' ? 'checked' : '' %>> Productor</label></div><%- err('rol') %></div>
+  <div class="fila">
+    <div class="campo"><label for="n">Nombre</label><input id="n" name="nombre" value="<%= d.nombre || '' %>"><%- err('nombre') %></div>
+    <div class="campo"><label for="a">Apellido</label><input id="a" name="apellido" value="<%= d.apellido || '' %>"><%- err('apellido') %></div>
+  </div>
+  <div class="campo"><label for="loc">Localidad</label><select id="loc" name="localidad"><option value="">Elegí…</option>
+    <% C.LOCALIDADES.forEach(l => { %><option <%= d.localidad === l ? 'selected' : '' %>><%= l %></option><% }) %></select><%- err('localidad') %></div>
+  <div class="campo"><label for="t">WhatsApp o teléfono</label><input id="t" name="telefono" value="<%= d.telefono || '' %>"><%- err('telefono') %></div>
+  <div class="campo"><label for="e">Nombre de la chacra o emprendimiento</label><input id="e" name="emprendimiento" value="<%= d.emprendimiento || '' %>"><span class="ayuda">Solo si sos productor.</span><%- err('emprendimiento') %></div>
+  <div class="campo"><label for="u">Usuario</label><input id="u" name="usuario" value="<%= d.usuario || '' %>" autocomplete="username"><%- err('usuario') %></div>
+  <div class="fila">
+    <div class="campo"><label for="c1">Clave</label><input id="c1" name="clave" type="password" autocomplete="new-password"><%- err('clave') %></div>
+    <div class="campo"><label for="c2">Repetir clave</label><input id="c2" name="clave2" type="password" autocomplete="new-password"><%- err('clave2') %></div>
+  </div>
+  <button class="btn">Crear cuenta</button>
+</form>
+<%- include('../parciales/pie') %>

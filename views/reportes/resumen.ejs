@@ -1,0 +1,8 @@
+<%- include('../parciales/cabecera', { titulo: 'Resumen' }) %>
+<h1>Resumen de tu chacra</h1>
+<div class="nums"><div><b><%= pesos(total) %></b>vendido sin intermediarios</div><div><b><%= pendientes %></b>pedidos por confirmar</div></div>
+<h2>Lo que más te rinde</h2>
+<% if (top.length) { %><div class="tabla-wrap"><table class="tabla"><tr><th>Producto</th><th>Unidades</th><th>Monto</th></tr>
+<% top.forEach(t => { %><tr><td><%= t.nombre %></td><td><%= t.unidades %></td><td><%= pesos(t.monto) %></td></tr><% }) %></table></div>
+<% } else { %><p class="vacio">Cuando vendas, acá ves qué producto te rinde más.</p><% } %>
+<%- include('../parciales/pie') %>

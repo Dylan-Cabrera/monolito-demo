@@ -1,0 +1,5 @@
+<%- include('parciales/cabecera', { titulo: 'Error ' + codigo }) %>
+<h1><%= codigo === 404 ? 'No encontramos eso' : codigo === 403 ? 'Acceso restringido' : 'Algo salió mal' %></h1>
+<p class="intro"><%= mensaje %></p>
+<p><a class="btn" href="/productos">Ir a los productos</a></p>
+<%- include('parciales/pie') %>

@@ -1,0 +1,17 @@
+<%- include('../parciales/cabecera', { titulo: 'Producto' }) %>
+<h1><%= d.id ? 'Editar producto' : 'Publicar producto' %></h1>
+<% const err = (k) => errores[k] ? `<span class="err">${errores[k]}</span>` : ''; %>
+<form method="post" class="form caja">
+  <div class="campo"><label for="nombre">Nombre</label><input id="nombre" name="nombre" value="<%= d.nombre || '' %>" required><%- err('nombre') %></div>
+  <div class="campo"><label for="cat">Categoría</label><select id="cat" name="categoria_id"><option value="">Elegí…</option>
+    <% categorias.forEach(c => { %><option value="<%= c.id %>" <%= d.categoria_id == c.id ? 'selected' : '' %>><%= c.nombre %></option><% }) %></select><%- err('categoria_id') %></div>
+  <div class="campo"><label for="desc">Descripción</label><textarea id="desc" name="descripcion" rows="3"><%= d.descripcion || '' %></textarea></div>
+  <div class="fila">
+    <div class="campo"><label for="precio">Precio ($)</label><input id="precio" name="precio" type="number" step="0.01" min="0.01" value="<%= d.precio || '' %>" required><%- err('precio') %></div>
+    <div class="campo"><label for="unidad">Por</label><select id="unidad" name="unidad"><% Object.entries(C.UNIDADES).forEach(([k,v]) => { %><option value="<%= k %>" <%= d.unidad === k ? 'selected' : '' %>><%= v %></option><% }) %></select></div>
+    <div class="campo"><label for="stock">Stock</label><input id="stock" name="stock" type="number" min="0" value="<%= d.stock ?? 0 %>" style="width:110px"><%- err('stock') %></div>
+  </div>
+  <div class="campo"><label><input type="checkbox" name="activo" <%= d.activo ? 'checked' : '' %>> Publicado en el catálogo</label></div>
+  <div class="fila"><button class="btn">Guardar</button><a class="btn sec" href="/panel/productos">Cancelar</a></div>
+</form>
+<%- include('../parciales/pie') %>

@@ -1,0 +1,14 @@
+<%- include('../parciales/cabecera', { titulo: 'Tablero provincial' }) %>
+<h1>Tablero provincial</h1>
+<p class="intro">Para el Ministerio o el municipio: cuánta plata llega directo a cada zona productiva.</p>
+<div class="nums"><div><b><%= pesos(total) %></b>directo al productor</div><div><b><%= productores %></b>productores con ventas</div></div>
+<h2>Por localidad del productor</h2>
+<% const max = Math.max(...porLocalidad.map(r => r.monto), 1); %>
+<div class="barras"><% porLocalidad.forEach(r => { %>
+  <span><%= r.localidad %></span>
+  <div class="barra-fila"><div class="barra" style="width:<%= (r.monto / max * 70).toFixed(1) %>%"></div><span class="origen"><%= pesos(r.monto) %>, <%= r.pedidos %> pedidos</span></div>
+<% }) %></div>
+<h2>Por categoría</h2>
+<div class="tabla-wrap"><table class="tabla"><tr><th>Categoría</th><th>Monto</th></tr>
+<% porCategoria.forEach(c => { %><tr><td><%= c.nombre %></td><td><%= pesos(c.monto) %></td></tr><% }) %></table></div>
+<%- include('../parciales/pie') %>

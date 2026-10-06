@@ -1,0 +1,15 @@
+<%- include('../parciales/cabecera', { titulo: p.nombre }) %>
+<p><a href="/productos">Volver a productos</a></p>
+<div class="caja" style="max-width:720px">
+  <span class="cat"><%= p.categoria %></span>
+  <h1><%= p.nombre %></h1>
+  <p><%= p.descripcion || 'El productor no cargó una descripción.' %></p>
+  <p class="precio"><%= pesos(p.precio) %> <small>por <%= C.UNIDADES[p.unidad] %>, quedan <%= p.stock %></small></p>
+  <p class="origen"><b><%= p.emprendimiento %></b> de <%= p.productor %>, <%= p.localidad %>. Contacto: <%= p.telefono %></p>
+  <% if (p.stock > 0) { %>
+  <form method="post" action="/carrito/agregar/<%= p.id %>" class="fila">
+    <input type="number" name="cantidad" value="1" min="1" max="<%= p.stock %>" style="width:86px" aria-label="Cantidad">
+    <button class="btn">Agregar al carrito</button></form>
+  <% } else { %><p class="vacio">Sin stock por ahora.</p><% } %>
+</div>
+<%- include('../parciales/pie') %>
