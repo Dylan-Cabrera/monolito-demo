@@ -26,5 +26,5 @@ r.post('/ingresar', limitadorIngreso, async (req, res) => {
   });
 });
 
-r.post('/salir', (req, res) => req.session.destroy(() => res.redirect('/')));
+r.post('/salir', (req, res) => req.session.destroy(() => res.redirect('/productos'))); // desde la app no se vuelve a la presentación
 module.exports = r;

@@ -45,7 +45,7 @@ const PASOS = [
     escena: { camara: 'cierre', flujo: 'directo', limites: false, etiquetas: ['pines', 'rios', 'proceso'], foco: [], orbita: true } },
   { parte: 5, titulo: 'Demo en vivo',
     texto: 'Lo que viste en 3D, ahora funcionando. La app y esta guía las atiende el mismo proceso.',
-    demo: [['Ir a la página de inicio', '/']],
+    entrar: ['Entrar a la app', '/productos'],
     vivo: 'pid',
     escena: { camara: 'demo', explotar: 0, recorrido: false, etiquetas: ['proceso'], foco: [], orbita: true } },
 ];

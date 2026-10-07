@@ -58,6 +58,7 @@ app.use((req, res, next) => {
   res.locals.C = C;
   res.locals.pesos = (n) => '$' + Number(n || 0).toLocaleString('es-AR', { maximumFractionDigits: 0 });
   res.locals.ruta = req.path;
+  res.locals.modo = 'app'; // la portada y la guía lo cambian a 'presentacion' (cabecera sin navegación de la app)
   res.locals.carritoCantidad = Object.values(req.session.carrito || {}).reduce((a, b) => a + b, 0);
   next();
 });

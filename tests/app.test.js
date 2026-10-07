@@ -146,6 +146,46 @@ test('borrar un producto con ventas lo oculta en lugar de borrarlo', async () =>
   assert.equal(rows[0].activo, false);
 });
 
+// --- Reveal: la presentación no muestra la app y desde la app no se vuelve a la presentación ---
+const cabeceraDe = (html) => (html.match(/<header class="top">[\s\S]*?<\/header>/) || [''])[0];
+
+test('presentación: la cabecera de / y /arquitectura no muestra la navegación de la app', async () => {
+  const laura = await ingresar('laura');
+  for (const ag of [request(app), laura]) { // con o sin sesión iniciada
+    for (const u of ['/', '/arquitectura']) {
+      const cab = cabeceraDe((await ag.get(u)).text);
+      assert.match(cab, /<a class="marca" href="\/arquitectura">/, `${u}: el logo no apunta a la guía`);
+      for (const h of ['/productos', '/carrito', '/ingresar', '/mis-compras', '/salir']) {
+        assert.ok(!cab.includes(`"${h}"`), `${u}: la cabecera muestra ${h}`);
+      }
+    }
+  }
+});
+
+test('app: tiene su navegación y ningún enlace de vuelta a la presentación', async () => {
+  const cab = cabeceraDe((await request(app).get('/productos')).text);
+  assert.match(cab, /<a class="marca" href="\/productos">/);
+  for (const h of ['/productos', '/carrito', '/ingresar']) assert.ok(cab.includes(`href="${h}"`), `falta ${h} en la cabecera`);
+  const sinVuelta = async (ag, u) => {
+    const html = (await ag.get(u)).text;
+    assert.doesNotMatch(html, /href="\/(arquitectura[^"]*)?"/, `${u} enlaza a la presentación`);
+  };
+  for (const u of ['/productos', '/carrito', '/ingresar', '/registro', '/no-existe']) await sinVuelta(request(app), u);
+  await sinVuelta(await ingresar('laura'), '/mis-compras');
+  await sinVuelta(await ingresar('ramon'), '/panel/productos');
+});
+
+test('reveal: el último paso entra a la app y salir no vuelve a la portada', async () => {
+  const html = (await request(app).get('/arquitectura')).text;
+  assert.match(html, /<a class="btn grande" href="\/productos" data-entrar>Entrar a la app<\/a>/);
+  assert.doesNotMatch(html, /href="\/"/);
+  assert.match((await request(app).get('/')).text, /<a class="btn" href="\/arquitectura">Ver la presentación<\/a>/);
+  const laura = await ingresar('laura');
+  const r = await enviar(laura, '/productos', '/salir');
+  assert.equal(r.status, 302);
+  assert.equal(r.headers.location, '/productos');
+});
+
 // Va último a propósito: deja bloqueada la IP de las pruebas y ningún test posterior podría ingresar.
 test('límite de intentos: después de 10 claves incorrectas el ingreso responde 429', async () => {
   // El test de "clave incorrecta" ya gastó un intento: se arranca de cero para contar los 10 completos.

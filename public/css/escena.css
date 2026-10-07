@@ -53,6 +53,7 @@ body.con-escena .top{position:relative;z-index:5}
 .vivo .nums{margin:8px 0 0;gap:12px}
 .vivo .nums b{font-size:1.7rem;color:var(--pomelo-bright);font-weight:800}
 .demo{display:flex;flex-direction:column;gap:8px}
+.btn.grande{justify-content:center;padding:18px 28px;font-family:var(--display);font-size:1.35rem;font-weight:800;font-stretch:85%;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 .ruta-codigo{font-family:ui-monospace,Consolas,monospace;color:var(--pomelo-bright)}
 .controles{display:flex;align-items:center;gap:12px;padding:14px 20px;border-top:1px solid var(--linea)}
 .controles .contador{margin-right:auto;color:var(--suave);font-size:.9rem;font-weight:500}

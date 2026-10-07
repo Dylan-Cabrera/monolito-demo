@@ -51,6 +51,9 @@ addEventListener('keydown', (e) => {
   else if (e.key.toLowerCase() === 'h') panel.classList.toggle('escondido');
   else if (e.key.toLowerCase() === 'f') document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
 });
+// Entrar a la app reemplaza la guía en el historial: desde la app, "atrás" no vuelve a la presentación.
+// Sin este script el enlace funciona igual, como un link común.
+document.querySelectorAll('[data-entrar]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); location.replace(a.href); }));
 addEventListener('hashchange', () => { const n = Number((location.hash.match(/paso-(\d+)/) || [])[1]) - 1; if (n >= 0 && n !== actual) ir(n); });
 const inicial = Number((location.hash.match(/paso-(\d+)/) || [])[1]) - 1;
 ir(Number.isInteger(inicial) && inicial >= 0 ? inicial : 0);
