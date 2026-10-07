@@ -16,12 +16,12 @@ npm install
 npm run semilla           # DROPS and recreates all tables, then loads demo data
 npm start                 # http://localhost:3000
 npm run dev               # same, with node --watch
-npm test                  # node --test --test-concurrency=1 tests/*.test.js (17 tests, real DB)
+npm test                  # node --test --test-concurrency=1 tests/*.test.js (20 tests, real DB)
 node --test --test-name-pattern="cancelar" tests/app.test.js   # single test by name
 ```
 
 - `.env` (copy from `.env.example`): `PORT`, `DATABASE_URL`, `SESSION_SECRET`, optional `NODE_ENV`. With `NODE_ENV=production`, `src/server.js` refuses to start (exit 1, via `validarSecreto` in `src/config.js`) if `SESSION_SECRET` is empty, `dev`, `cambiar-esto` or shorter than 32 chars. Generate one with `openssl rand -hex 32`.
-- 17 tests in three files: `tests/app.test.js` (11, HTTP integration), `tests/reportes.test.js` (3, calls `reportes/servicio` directly with its own fixtures), `tests/config.test.js` (3, no DB). The files run **in series** (`--test-concurrency=1`) because `app` and `reportes` each drop and recreate the schema on the same test database; do not remove that flag.
+- 20 tests in three files: `tests/app.test.js` (14, HTTP integration), `tests/reportes.test.js` (3, calls `reportes/servicio` directly with its own fixtures), `tests/config.test.js` (3, no DB). The files run **in series** (`--test-concurrency=1`) because `app` and `reportes` each drop and recreate the schema on the same test database; do not remove that flag.
 - Tests need a separate database: `CREATE DATABASE chacra_test;` (compose only creates `chacra`; `docker/init.sql` is an empty placeholder). Override with `TEST_DATABASE_URL`. The test file forces `DATABASE_URL` to the test DB before requiring the app, and its `before` hook runs `schema.sql`, which **drops every table**, so never point it at a database you care about.
 - Tests in `tests/app.test.js` share state and run in order (later tests rely on the pedido and stock left by earlier ones); a test run in isolation with `--test-name-pattern` may fail for that reason. The rate-limit test must stay **last** in that file: it leaves the test IP blocked for logins.
 - Tests that submit a POST form use the helpers at the top of `tests/app.test.js`: `enviar(ag, pagina, accion, datos)` GETs the page that contains the form, pulls its CSRF token with `tokenDe(html, accion)` and posts it as `_csrf`. A bare `ag.post(...)` without the token gets a 403.
@@ -54,7 +54,7 @@ Three in-process dependencies, no extra service or datastore: `helmet`, `csrf-sy
 
 - **Errors:** services throw `ErrorNegocio(msg, status = 400)` from `src/errores.js`. Routes catch the 400s and turn them into a flash message + redirect; they rethrow 403/404, which the final handler in `app.js` renders with `views/error.ejs`. Express 5 forwards rejected async handlers, so there are no `try/catch → next(err)` wrappers.
 - **Auth:** `cargarUsuario` (global) sets `req.usuario` and `res.locals.usuario`; guard routes with `requiereLogin` or `requiereRol('PRODUCTOR' | 'COMPRADOR' | 'ADMIN')`. Ownership checks (a producer only touches their own products/orders) live in the services, not the middleware.
-- **View locals** set once in `app.js` and available in every template: `usuario`, `flash`, `C` (`src/constantes.js`), `pesos()` formatter, `ruta`, `carritoCantidad`, `pid`, `t0`, `nonce`, `campoCsrf()`. The footer partial shows the PID and response time as live evidence of the single process.
+- **View locals** set once in `app.js` and available in every template: `usuario`, `flash`, `C` (`src/constantes.js`), `pesos()` formatter, `ruta`, `carritoCantidad`, `pid`, `t0`, `nonce`, `campoCsrf()`, `modo` (`'app'` by default; the guide routes switch it to `'presentacion'`, see the reveal rule below). The footer partial shows the PID and response time as live evidence of the single process.
 - **Domain constants** (`src/constantes.js`): the DB stores keys (`PENDIENTE`, `RETIRO`, `kg`), the constants map them to display labels, and `TRANSICIONES` is the order state machine. The same enums are duplicated as `CHECK` constraints in `schema.sql`; change both together.
 - **Order rules** (covered by tests; preserve them): confirming a cart is one transaction that creates one pedido per producer; items snapshot `precio_unitario`; cancelling restores stock; buyers can only cancel; a product with sales is hidden (`activo = false`) instead of deleted.
 
@@ -74,15 +74,22 @@ Este archivo lo usan tanto Claude Code como el grupo (Augusto, Dylan, Diego, Fel
 
 ### Estado actual del trabajo
 
-- **Fase 1 cerrada** (seguridad mínima): 17/17 tests pasando, rama `franco/analisis-y-refinamiento` pusheada al remoto. Se agregó:
+- **Fase 2 cerrada** (reveal UX de la presentación): 20/20 tests pasando, rama `franco/analisis-y-refinamiento`. Se agregó:
+  - Una sola `cabecera.ejs` con `modo` (Opción A): en la presentación solo muestra el logo (y el toggle de tema en la portada).
+  - La portada tiene un único botón, "Ver la presentación", hacia `/arquitectura`.
+  - El paso 11 de la guía tiene el botón "Entrar a la app" (`entrar` en `pasos.js`), que va a `/productos` con `location.replace` desde `public/js/guia.js`.
+  - El logo lleva a `/arquitectura` en la presentación y a `/productos` en la app; `POST /salir` redirige a `/productos`.
+  - 3 tests del reveal en `tests/app.test.js`.
+  - Descartado por ahora: prefetch de `/productos` desde la guía (se evalúa en Fase 4).
+- **Fase 1 cerrada** (seguridad mínima). Se agregó:
   - Protección CSRF con `csrf-sync` en los 10 formularios POST.
   - `helmet` con CSP por nonce (sin `upgrade-insecure-requests`, para el aula por IP).
   - Rate-limit en `POST /ingresar` con `express-rate-limit`: 10 intentos fallidos cada 15 minutos por IP.
   - Guard en `src/server.js`: en producción no arranca con un `SESSION_SECRET` vacío, de ejemplo o de menos de 32 caracteres.
   - 3 tests de `reportes/servicio.js` (`resumenProductor`, `tablero`, `pulso`).
   - Tests en serie con `--test-concurrency=1`.
-- **Próxima fase**: Fase 2 — el reveal UX de la presentación.
-- Después vienen Fase 3 (figuras del PDF + cerrar placeholders) y Fase 4 (pulido de diseño, incluye sacar los `style="…"` inline para poder endurecer la CSP).
+- **Próxima fase**: Fase 3 — figuras del PDF + cerrar placeholders.
+- Después viene Fase 4 (pulido de diseño, incluye sacar los `style="…"` inline para poder endurecer la CSP).
 
 ### Reglas inviolables del monolito
 
@@ -96,6 +103,7 @@ Si Claude Code propone algo que viola cualquiera de estas, rechazar o pedir alte
 6. **No borrar un producto con ventas**: ocultarlo con `activo = false` para preservar el historial.
 7. **Mantener el PID en el footer de cada página** (`views/parciales/pie.ejs`): es la evidencia visible de que el monolito es un solo proceso.
 8. **Todo formulario POST nuevo tiene que incluir `<%- campoCsrf() %>` dentro del `<form>`. Todo `<script>` inline nuevo tiene que llevar `nonce="<%= nonce %>"`.** Sin el primero el envío da 403; sin el segundo el navegador no ejecuta el script. Tampoco usar `onclick=`/`onsubmit=` inline: la CSP los bloquea.
+9. **`modo = 'presentacion'` lo setean solo las rutas de `guia` (`/` y `/arquitectura`, con el middleware `presentacion` de `src/modulos/guia/rutas.js`); el resto queda en `'app'` por el default de `src/app.js`.** `views/parciales/cabecera.ejs` lo respeta: en presentación oculta toda la navegación de la app (links y "Salir") y el logo lleva a `/arquitectura`; en la app el logo lleva a `/productos`. No pasar `modo` en un `res.render` de la app (el nombre también lo usa `pedidos/_pedido.ejs`, pero a nivel del `include`).
 
 ### Qué NO hacer
 
@@ -106,11 +114,10 @@ Si Claude Code propone algo que viola cualquiera de estas, rechazar o pedir alte
 - No tocar `src/db/schema.sql` sin acuerdo con el grupo: cualquier cambio obliga a actualizar `semilla.js` y los tests.
 - No borrar tests sin reemplazarlos.
 - No commitear el `.env` real ni ningún `SESSION_SECRET` fuerte en el repo.
-- No agregar links a `/arquitectura` ni a `/` dentro del flujo de la app: la regla UX es "desde la app no se vuelve a la presentación".
+- No agregar links a `/arquitectura` ni a `/` dentro del flujo de la app: la regla UX es "desde la app no se vuelve a la presentación". Tampoco redirects (por eso `POST /salir` va a `/productos`). El test "app: tiene su navegación y ningún enlace de vuelta a la presentación" lo verifica.
 
 ### Decisiones pendientes del grupo
 
-- **Opción A o B para el reveal en Fase 2**: una `cabecera.ejs` con parámetro `modo` (recomendada) vs dos cabeceras separadas (`cabecera_pres.ejs` + `cabecera_app.ejs`).
 - **Imágenes de productos**: respetar el "sin fotos" del PDF o agregar un campo `imagen_url`.
 - **Figuras del PDF**: generarlas con Mermaid en `docs/figuras/` dentro del repo o dibujarlas aparte y subir PNG.
 
@@ -126,7 +133,7 @@ Si Claude Code propone algo que viola cualquiera de estas, rechazar o pedir alte
 
 - Una conversación por fase. No mezclar Fase 1 (seguridad) con Fase 2 (reveal) en la misma sesión: se enreda el contexto.
 - Antes de cualquier cambio grande, pedirle a Claude Code que lea los archivos relevantes y proponga un plan sin aplicar nada todavía.
-- Después de cada cambio, correr `npm test` y verificar que siguen pasando todos los tests (hoy 17/17).
+- Después de cada cambio, correr `npm test` y verificar que siguen pasando todos los tests (hoy 20/20).
 - Los `git commit` los hacemos manualmente desde Git Bash para controlar el mensaje y lo que entra; no delegar el commit a Claude Code.
 - Commits chicos y descriptivos en castellano. Ejemplos: `feat(seguridad): agrega protección CSRF a formularios POST`, `fix(reveal): logo del header no linkea a la presentación desde dentro de la app`.
 
