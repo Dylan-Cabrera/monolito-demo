@@ -8,6 +8,8 @@ const bcrypt = require('bcryptjs');
 const request = require('supertest');
 const { pool, transaccion } = require('../src/db/pool');
 const app = require('../src/app');
+const { ipKeyGenerator } = require('express-rate-limit');
+const { limitadorIngreso } = require('../src/middlewares/limites');
 
 let prod, prodId;
 before(async () => {
@@ -142,4 +144,20 @@ test('borrar un producto con ventas lo oculta en lugar de borrarlo', async () =>
   await enviar(ramon, '/panel/productos', `/panel/productos/${prod}/borrar`);
   const { rows } = await pool.query('SELECT activo FROM productos WHERE id=$1', [prod]);
   assert.equal(rows[0].activo, false);
+});
+
+// Va último a propósito: deja bloqueada la IP de las pruebas y ningún test posterior podría ingresar.
+test('límite de intentos: después de 10 claves incorrectas el ingreso responde 429', async () => {
+  // El test de "clave incorrecta" ya gastó un intento: se arranca de cero para contar los 10 completos.
+  for (const ip of ['127.0.0.1', '::ffff:127.0.0.1', '::1']) await limitadorIngreso.resetKey(ipKeyGenerator(ip));
+  const ag = request.agent(app);
+  const _csrf = tokenDe((await ag.get('/ingresar')).text, '/ingresar');
+  const intentar = (clave) => ag.post('/ingresar').type('form').send({ usuario: 'laura', clave, _csrf });
+  for (let i = 1; i <= 10; i++) assert.equal((await intentar('mal')).status, 401, `intento ${i}`);
+  const r = await intentar('mal');
+  assert.equal(r.status, 429);
+  assert.match(r.text, /Demasiados intentos\. Esperá unos minutos y probá de nuevo\./);
+  assert.match(r.headers.ratelimit, /limit=10, remaining=0/);
+  assert.equal((await intentar('clave1234')).status, 429); // bloqueado aunque ahora la clave sea la correcta
+  assert.equal((await ag.get('/ingresar')).status, 200); // el GET no está limitado
 });

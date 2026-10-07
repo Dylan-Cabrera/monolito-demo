@@ -1,5 +1,6 @@
 const r = require('express').Router();
 const s = require('./servicio');
+const { limitadorIngreso } = require('../../middlewares/limites');
 
 const destinoSeguro = (sig) => (sig && sig.startsWith('/') && !sig.startsWith('//') ? sig : '/productos');
 
@@ -13,7 +14,7 @@ r.post('/registro', async (req, res) => {
 });
 
 r.get('/ingresar', (req, res) => res.render('usuarios/ingresar', { sig: req.query.sig || '', error: null }));
-r.post('/ingresar', async (req, res) => {
+r.post('/ingresar', limitadorIngreso, async (req, res) => {
   const id = await s.autenticar(req.body.usuario, req.body.clave);
   if (!id) return res.status(401).render('usuarios/ingresar', { sig: req.body.sig, error: 'Usuario o clave incorrectos.' });
   const carrito = req.session.carrito; // conservar el carrito armado antes de ingresar
