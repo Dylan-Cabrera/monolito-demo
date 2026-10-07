@@ -16,12 +16,12 @@
     <span class="cat"><%= p.categoria %></span>
     <h3><a href="/productos/<%= p.id %>"><%= p.nombre %></a></h3>
     <div class="origen"><b><%= p.emprendimiento %></b>, <%= p.localidad %></div>
-    <div class="origen">Quedan <%= p.stock %></div>
+    <div class="stock">Quedan <%= p.stock %></div>
     <div class="precio"><%= pesos(p.precio) %> <small>por <%= C.UNIDADES[p.unidad] %></small></div>
-    <form method="post" action="/carrito/agregar/<%= p.id %>" class="fila">
+    <form method="post" action="/carrito/agregar/<%= p.id %>" class="comprar">
       <%- campoCsrf() %>
-      <input type="number" name="cantidad" value="1" min="1" max="<%= p.stock %>" style="width:76px" aria-label="Cantidad de <%= p.nombre %>">
-      <button class="btn chico">Agregar al carrito</button></form>
+      <input class="cantidad" type="number" name="cantidad" value="1" min="1" max="<%= p.stock %>" aria-label="Cantidad de <%= p.nombre %>">
+      <button class="btn">Agregar al carrito</button></form>
   </article>
 <% }) %></div>
 <% } else { %><p class="vacio">No hay productos con esos filtros. Probá otra localidad o categoría.</p><% } %>

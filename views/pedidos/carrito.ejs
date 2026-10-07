@@ -1,18 +1,25 @@
 <%- include('../parciales/cabecera', { titulo: 'Carrito' }) %>
+<div class="carrito">
 <h1>Tu carrito</h1>
 <% if (lineas.length) { %>
-<div class="tabla-wrap"><table class="tabla"><tr><th>Producto</th><th>Productor</th><th>Cantidad</th><th>Subtotal</th><th></th></tr>
-<% lineas.forEach(l => { %><tr><td><%= l.p.nombre %></td><td><%= l.p.emprendimiento %></td><td><%= l.cantidad %> <%= C.UNIDADES[l.p.unidad] %></td><td><%= pesos(l.subtotal) %></td>
-<td><form method="post" action="/carrito/quitar/<%= l.p.id %>"><%- campoCsrf() %><button class="btn sec chico">Quitar</button></form></td></tr><% }) %>
-<tr><th colspan="3">Total</th><th colspan="2" style="color:var(--texto);font-size:1.1rem"><%= pesos(total) %></th></tr></table></div>
+<ul class="lineas">
+<% lineas.forEach(l => { %><li class="linea">
+  <div class="linea-info"><b class="linea-nombre"><%= l.p.nombre %></b><span class="origen"><%= l.p.emprendimiento %></span></div>
+  <span class="linea-cant"><%= l.cantidad %> <%= C.UNIDADES[l.p.unidad] %></span>
+  <b class="linea-sub"><%= pesos(l.subtotal) %></b>
+  <form method="post" action="/carrito/quitar/<%= l.p.id %>"><%- campoCsrf() %><button class="btn sec chico">Quitar</button></form>
+</li><% }) %>
+</ul>
+<div class="total-caja"><span>Total</span><b><%= pesos(total) %></b></div>
 <% const productores = new Set(lineas.map(l => l.p.productor_id)).size; %>
-<% if (productores > 1) { %><p class="intro">Tu carrito tiene productos de <%= productores %> productores: se va a generar un pedido para cada uno.</p><% } %>
-<form method="post" action="/carrito/confirmar" class="form caja" style="margin-top:20px">
+<% if (productores > 1) { %><p class="nota-info"><span class="nota-icono" aria-hidden="true">ⓘ</span><span>Tu carrito tiene productos de <%= productores %> productores: se va a generar un pedido para cada uno.</span></p><% } %>
+<form method="post" action="/carrito/confirmar" class="form caja envio">
   <%- campoCsrf() %>
   <div class="campo"><label for="m">¿Cómo lo recibís?</label><select id="m" name="modalidad"><% Object.entries(C.MODALIDADES).forEach(([k,v]) => { %><option value="<%= k %>"><%= v %></option><% }) %></select></div>
   <div class="campo"><label for="d">Dirección</label><input id="d" name="direccion"><span class="ayuda">Obligatoria si pedís envío.</span></div>
   <div class="campo"><label for="n">Nota para el productor</label><input id="n" name="nota"></div>
-  <% if (usuario) { %><button class="btn">Enviar pedido</button><% } else { %><a class="btn" href="/ingresar?sig=/carrito">Ingresá para enviar el pedido</a><% } %>
+  <% if (usuario) { %><button class="btn amplio bloque">Enviar pedido</button><% } else { %><a class="btn amplio bloque" href="/ingresar?sig=/carrito">Ingresá para enviar el pedido</a><% } %>
 </form>
 <% } else { %><p class="vacio">El carrito está vacío. <a href="/productos">Ver productos</a></p><% } %>
+</div>
 <%- include('../parciales/pie') %>
