@@ -1,5 +1,5 @@
 {
-  "name": "mercado-chacarero",
+  "name": "canto-de-hornero",
   "version": "1.0.0",
   "description": "Monolito Express + EJS + PostgreSQL para productores de Formosa",
   "main": "src/server.js",

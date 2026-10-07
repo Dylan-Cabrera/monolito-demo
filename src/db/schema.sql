@@ -1,4 +1,4 @@
--- Mercado Chacarero: esquema único (un monolito, una base de datos)
+-- Canto de Hornero: esquema único (un monolito, una base de datos)
 DROP TABLE IF EXISTS items_pedido, pedidos, productos, categorias, usuarios CASCADE;
 
 CREATE TABLE usuarios (

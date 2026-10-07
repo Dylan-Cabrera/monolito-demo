@@ -1,4 +1,4 @@
-// Mercado Chacarero: UN proceso, UN despliegue, UNA base de datos.
+// Canto de Hornero: UN proceso, UN despliegue, UNA base de datos.
 const path = require('path');
 const express = require('express');
 const session = require('express-session');

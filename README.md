@@ -1,4 +1,6 @@
-# Mercado Chacarero
+# Canto de Hornero
+
+*Que tu producción se escuche.*
 
 Aplicación web **monolítica** para que los productores de Formosa vendan directo, sin intermediarios.
 Incluye una portada 3D y una guía de exposición en `/arquitectura`, servidas por el mismo monolito.

@@ -1,9 +1,10 @@
-# Ficha técnica: Mercado Chacarero
+# Ficha técnica: Canto de Hornero
 
 ## 1. Datos generales
 | Campo | Detalle |
 |---|---|
-| Nombre | Mercado Chacarero |
+| Nombre | Canto de Hornero |
+| Lema | Que tu producción se escuche. |
 | Tipo | Aplicación web con arquitectura **monolítica** |
 | Problemática | Los pequeños productores del interior de Formosa dependen de intermediarios para vender. Pierden margen y no controlan el precio, y el comprador no conoce el origen del producto. |
 | Solución | Catálogo donde el productor publica y fija su precio, y el comprador pide directo. Un tablero muestra lo vendido por localidad. |

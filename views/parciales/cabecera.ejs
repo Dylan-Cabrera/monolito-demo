@@ -4,14 +4,14 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
 <% if (!fijo) { %><script>try{if(localStorage.getItem('tema')==='claro'){document.documentElement.dataset.tema='claro';document.documentElement.style.colorScheme='light'}}catch(e){}</script><% } %>
-<title><%= typeof titulo !== 'undefined' ? titulo + ' · ' : '' %>Mercado Chacarero</title>
+<title><%= typeof titulo !== 'undefined' ? titulo + ' · ' : '' %>Canto de Hornero</title>
 <link rel="icon" type="image/png" href="/img/favicon.png">
 <link rel="stylesheet" href="/css/app.css">
 <% if (!fijo) { %><script src="/js/tema.js" defer></script><% } %>
 <% if (typeof extraHead !== 'undefined') { %><%- extraHead %><% } %>
 </head><body class="<%= typeof clase !== 'undefined' ? clase : '' %>">
 <header class="top"><div class="wrap">
-  <a class="marca" href="/"><img src="/img/escudo-formosa.png" alt="Escudo de la Provincia de Formosa" width="40" height="38">Mercado Chacarero</a>
+  <a class="marca" href="/"><img src="/img/escudo-formosa.png" alt="Escudo de la Provincia de Formosa" width="40" height="38">Canto de Hornero</a>
   <nav aria-label="Principal">
     <% const a = (h) => ruta === h || (h !== '/' && ruta.startsWith(h)) ? 'activo' : ''; %>
     <a class="<%= a('/productos') %>" href="/productos">Productos</a>

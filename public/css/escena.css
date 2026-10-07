@@ -22,6 +22,7 @@ body.con-escena .top{position:relative;z-index:5}
 .portada .wrap{pointer-events:auto}
 .portada h1{font-size:clamp(3rem,10vw,8.5rem);font-stretch:75%;font-weight:800;line-height:.88;letter-spacing:-.02em;margin:0 0 .25em;max-width:9ch}
 .portada p{font-size:clamp(1rem,1.6vw,1.25rem);color:var(--suave);max-width:46ch;margin:0 0 22px}
+.portada .lema{font-family:var(--display);font-size:clamp(1.35rem,2.6vw,2rem);font-weight:700;font-stretch:85%;line-height:1.15;color:var(--pomelo-bright);margin:-.1em 0 .7em}
 .pulso{display:flex;gap:clamp(18px,4vw,48px);margin:0 0 26px;flex-wrap:wrap}
 .pulso div{color:var(--suave);font-size:.9rem}
 .pulso b{display:block;font-family:var(--display);font-size:clamp(1.6rem,3vw,2.3rem);color:var(--texto);line-height:1}

@@ -8,7 +8,7 @@ r.post('/registro', async (req, res) => {
   const { id, errores } = await s.registrar(req.body);
   if (errores) return res.status(422).render('usuarios/registro', { d: req.body, errores });
   req.session.usuarioId = id;
-  req.flash('ok', '¡Bienvenido a Mercado Chacarero!');
+  req.flash('ok', '¡Bienvenido a Canto de Hornero!');
   res.redirect(req.body.rol === 'PRODUCTOR' ? '/panel/productos' : '/productos');
 });
 

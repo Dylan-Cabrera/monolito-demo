@@ -22,7 +22,7 @@ All three user types carry equal product weight; the platform is designed to ser
 
 ## Product Purpose
 
-Mercado Chacarero eliminates intermediaries between small agricultural producers in Formosa and their buyers. Producers publish products at their chosen price, buyers discover goods directly and know their origin, and the marketplace provides transparency and control over the local food economy. Success means sustained producer participation, buyer trust in product origin, and a functioning direct-to-consumer market.
+Canto de Hornero eliminates intermediaries between small agricultural producers in Formosa and their buyers. Producers publish products at their chosen price, buyers discover goods directly and know their origin, and the marketplace provides transparency and control over the local food economy. Success means sustained producer participation, buyer trust in product origin, and a functioning direct-to-consumer market.
 
 ## Positioning
 
@@ -56,6 +56,8 @@ Direct sales model for agricultural products in Formosa, Argentina. Producers ma
 - Database enforces: price > 0, stock ≥ 0, valid status and role enums
 
 ## Brand Commitments
+
+Name: **Canto de Hornero** (renamed from "Mercado Chacarero" on 2026-10-06). Tagline: "Que tu producción se escuche." Both are binding user decisions.
 
 3D animations must be preserved, especially the exhibition guide at `/arquitectura`. Current three.js implementation is binding and performs a critical role in live presentations.
 
