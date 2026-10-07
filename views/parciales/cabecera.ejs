@@ -3,7 +3,7 @@
 <html lang="es" data-tema="<%= fijo || 'oscuro' %>"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
-<% if (!fijo) { %><script>try{if(localStorage.getItem('tema')==='claro'){document.documentElement.dataset.tema='claro';document.documentElement.style.colorScheme='light'}}catch(e){}</script><% } %>
+<% if (!fijo) { %><script nonce="<%= nonce %>">try{if(localStorage.getItem('tema')==='claro'){document.documentElement.dataset.tema='claro';document.documentElement.style.colorScheme='light'}}catch(e){}</script><% } %>
 <title><%= typeof titulo !== 'undefined' ? titulo + ' · ' : '' %>Canto de Hornero</title>
 <link rel="icon" type="image/png" href="/img/favicon.png">
 <link rel="stylesheet" href="/css/app.css">

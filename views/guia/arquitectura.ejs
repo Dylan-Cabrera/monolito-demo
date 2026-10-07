@@ -30,6 +30,6 @@
   </div>
 </aside>
 <div class="atajos"><kbd>←</kbd> <kbd>→</kbd> pasos, <kbd>H</kbd> ocultar panel, <kbd>F</kbd> pantalla completa</div>
-<script>window.GUIA = { partes: <%- JSON.stringify(PARTES) %>, escenas: <%- JSON.stringify(PASOS.map(p => p.escena)) %> };</script>
+<script nonce="<%= nonce %>">window.GUIA = { partes: <%- JSON.stringify(PARTES) %>, escenas: <%- JSON.stringify(PASOS.map(p => p.escena)) %> };</script>
 <script type="module" src="/js/guia.js"></script>
 <%- include('../parciales/pie') %>

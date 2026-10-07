@@ -12,7 +12,7 @@
   </div>
   <div class="fila"><a class="btn" href="/productos">Ver productos</a><a class="btn sec" href="/registro">Soy productor: quiero vender</a></div>
 </div></section>
-<script type="module">
+<script type="module" nonce="<%= nonce %>">
   import { crearHornero, hayWebGL } from '/js/hornero.js';
   if (hayWebGL()) crearHornero(document.getElementById('lienzo'));
 </script>

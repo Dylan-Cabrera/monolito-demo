@@ -1,6 +1,8 @@
 // Canto de Hornero: UN proceso, UN despliegue, UNA base de datos.
 const path = require('path');
+const crypto = require('crypto');
 const express = require('express');
+const helmet = require('helmet');
 const session = require('express-session');
 const PgSession = require('connect-pg-simple')(session);
 const { csrfSync } = require('csrf-sync');
@@ -15,6 +17,21 @@ const nm = (p) => path.join(raiz, 'node_modules', p);
 // --- Capa de presentación (vistas EJS renderizadas en el servidor) ---
 app.set('view engine', 'ejs');
 app.set('views', path.join(raiz, 'views'));
+
+// --- Cabeceras de seguridad (van primero para cubrir también los estáticos) ---
+// Cada respuesta lleva un nonce: solo corren los <script> inline que lo traen (tema, import map de three.js, datos de la guía).
+app.use((req, res, next) => { res.locals.nonce = crypto.randomBytes(16).toString('base64'); next(); });
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.nonce}'`],
+      styleSrc: ["'self'", "'unsafe-inline'"], // todavía hay style="…" en las vistas
+      upgradeInsecureRequests: null, // en el aula se entra por http://IP:3000; forzar https rompería CSS, JS y three.js
+    },
+  },
+  referrerPolicy: { policy: 'same-origin' }, // "agregar al carrito" vuelve a la página anterior usando Referer
+  hsts: process.env.NODE_ENV === 'production',
+}));
 
 // --- Archivos estáticos: hasta three.js lo sirve el mismo monolito ---
 app.use(express.static(path.join(raiz, 'public')));

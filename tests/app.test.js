@@ -53,6 +53,26 @@ test('portada, guía y catálogo responden', async () => {
   assert.equal(r.body.pid, process.pid); // mismo proceso que corre las pruebas
 });
 
+test('cabeceras de seguridad: CSP con nonce en cada script inline, sin forzar https', async () => {
+  const nonces = [];
+  for (const u of ['/', '/arquitectura', '/productos']) {
+    const r = await request(app).get(u);
+    const csp = r.headers['content-security-policy'];
+    const nonce = (csp.match(/script-src[^;]*'nonce-([^']+)'/) || [])[1];
+    assert.ok(nonce, `${u}: la CSP no trae nonce`);
+    nonces.push(nonce);
+    const inline = r.text.match(/<script\b(?![^>]*\bsrc=)[^>]*>/g) || [];
+    for (const s of inline) assert.ok(s.includes(`nonce="${nonce}"`), `${u}: script inline sin nonce: ${s}`);
+    assert.doesNotMatch(r.text, /\son[a-z]+="/, `${u}: hay un manejador inline (onclick, onsubmit…)`);
+    assert.doesNotMatch(csp, /upgrade-insecure-requests|unsafe-eval/);
+    assert.equal(r.headers['referrer-policy'], 'same-origin');
+    assert.equal(r.headers['strict-transport-security'], undefined); // HSTS solo en producción
+  }
+  assert.equal(new Set(nonces).size, 3); // un nonce distinto por respuesta
+  const css = await request(app).get('/css/app.css');
+  assert.equal(css.headers['x-content-type-options'], 'nosniff'); // los estáticos también salen con cabeceras
+});
+
 test('clave incorrecta no ingresa', async () => {
   const r = await enviar(request.agent(app), '/ingresar', '/ingresar', { usuario: 'laura', clave: 'mal' });
   assert.equal(r.status, 401);
