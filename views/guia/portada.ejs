@@ -10,7 +10,8 @@
     <div><b><%= pulso.productos %></b>productos publicados</div>
     <div><b><%= pesos(pulso.vendido) %></b>directo al productor</div>
   </div>
-  <div class="fila"><a class="btn" href="/arquitectura">Ver la presentación</a></div>
+  <%# "/" es la entrada a la presentación; "/inicio" es la misma portada dentro de la app y no vuelve a la guía %>
+  <div class="fila"><% if (modo === 'presentacion') { %><a class="btn" href="/arquitectura">Ver la presentación</a><% } else { %><a class="btn" href="/productos">Ver productos</a><% } %></div>
 </div></section>
 <script type="module" nonce="<%= nonce %>">
   import { crearHornero, hayWebGL } from '/js/hornero.js';

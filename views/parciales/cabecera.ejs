@@ -17,6 +17,7 @@
   <nav aria-label="Principal">
     <% if (!pres) { %>
     <% const a = (h) => ruta === h || (h !== '/' && ruta.startsWith(h)) ? 'activo' : ''; %>
+    <a class="<%= a('/inicio') %>" href="/inicio">Inicio</a>
     <a class="<%= a('/productos') %>" href="/productos">Productos</a>
     <% if (usuario) { %>
       <% if (usuario.rol === 'PRODUCTOR') { %>

@@ -1,7 +1,11 @@
 const r = require('express').Router();
 const s = require('./servicio');
+const { pulso } = require('../reportes/servicio'); // llamada directa entre módulos, igual que en guia
 const { requiereRol } = require('../../middlewares/auth');
 const { ErrorNegocio } = require('../../errores');
+
+// Bienvenida de la app: la misma portada 3D que "/", pero en modo app (con navegación y botón al catálogo)
+r.get('/inicio', async (req, res) => res.render('guia/portada', { pulso: await pulso() }));
 
 r.get('/productos', async (req, res) => {
   const filtros = { q: req.query.q || '', categoria: req.query.categoria || '', localidad: req.query.localidad || '' };
