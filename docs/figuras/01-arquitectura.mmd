@@ -1,0 +1,43 @@
+%% Figura 1 - Arquitectura de Canto de Hornero: un monolito modular en capas
+flowchart TB
+  nav["Navegador (cliente)<br/>HTML + CSS + three.js"]
+
+  subgraph mono["Un proceso Node.js (PID único) - Monolito modular"]
+    direction TB
+
+    subgraph rutas["Express Router - capa de rutas (rutas.js)"]
+      direction LR
+      m1["usuarios"]
+      m2["catalogo"]
+      m3["pedidos"]
+      m4["reportes"]
+      m5["guia"]
+    end
+
+    servicios["Servicios - lógica de negocio + SQL (servicio.js)"]
+    vistas["Vistas EJS - presentación renderizada en el servidor"]
+    estaticos["Archivos estáticos<br/>three.js servido desde /vendor/three"]
+  end
+
+  subgraph pg["PostgreSQL - una sola base de datos"]
+    direction LR
+    t1[("usuarios")]
+    t2[("categorias")]
+    t3[("productos")]
+    t4[("pedidos")]
+    t5[("items_pedido")]
+    t6[("session<br/>(sesiones)")]
+  end
+
+  nav -->|"petición HTTP"| rutas
+  rutas -->|"llamada a función (require)"| servicios
+  servicios -->|"SQL"| pg
+  servicios -.->|"datos"| rutas
+  rutas -->|"res.render"| vistas
+  vistas -->|"HTML"| nav
+  estaticos -->|"JS, CSS, fuentes"| nav
+
+  classDef capa fill:#e8f1fb,stroke:#1f5fa8,color:#10243d
+  classDef externo fill:#fff4e0,stroke:#b9770e,color:#3d2a05
+  class servicios,vistas,estaticos,m1,m2,m3,m4,m5 capa
+  class nav,t1,t2,t3,t4,t5,t6 externo

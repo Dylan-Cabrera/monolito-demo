@@ -1,0 +1,34 @@
+%% Figura 3 - Casos de uso (HU1 a HU8) por actor
+flowchart LR
+  productor(["Productor"])
+  comprador(["Comprador"])
+  admin(["Administrador provincial"])
+
+  subgraph sistema["Canto de Hornero"]
+    direction TB
+    hu1(["HU1 - Publicar productos"])
+    hu5(["HU5 - Confirmar pedidos y marcarlos entregados"])
+    hu7(["HU7 - Ver resumen de ventas"])
+    hu6(["HU6 - Cancelar pedido"])
+    hu2(["HU2 - Filtrar productos por localidad"])
+    hu3(["HU3 - Confirmar carrito con varios productores"])
+    hu4(["HU4 - Rechazo si falta stock"])
+    hu8(["HU8 - Ver tablero por localidad"])
+  end
+
+  productor --- hu1
+  productor --- hu5
+  productor --- hu7
+  productor ---|"pendiente o confirmado"| hu6
+
+  comprador ---|"pendiente"| hu6
+  comprador --- hu2
+  comprador --- hu3
+  comprador --- hu4
+
+  admin --- hu8
+
+  classDef actor fill:#fff4e0,stroke:#b9770e,color:#3d2a05
+  classDef caso fill:#e8f1fb,stroke:#1f5fa8,color:#10243d
+  class productor,comprador,admin actor
+  class hu1,hu2,hu3,hu4,hu5,hu6,hu7,hu8 caso

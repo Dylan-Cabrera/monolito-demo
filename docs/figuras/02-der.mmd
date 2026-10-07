@@ -1,0 +1,58 @@
+%% Figura 2 - Diagrama entidad-relación (fuente: src/db/schema.sql)
+erDiagram
+  usuarios {
+    int id PK
+    varchar usuario UK
+    varchar clave_hash
+    varchar nombre
+    varchar apellido
+    varchar rol "PRODUCTOR, COMPRADOR o ADMIN"
+    varchar telefono
+    varchar localidad
+    varchar emprendimiento "obligatorio si es PRODUCTOR"
+    timestamptz creado
+  }
+
+  categorias {
+    int id PK
+    varchar nombre UK
+  }
+
+  productos {
+    int id PK
+    int productor_id FK
+    int categoria_id FK
+    varchar nombre
+    text descripcion
+    numeric precio "mayor que 0"
+    varchar unidad
+    int stock "mayor o igual a 0"
+    boolean activo "false = oculto, no se borra"
+    timestamptz creado
+  }
+
+  pedidos {
+    int id PK
+    int comprador_id FK
+    int productor_id FK
+    varchar estado "PENDIENTE, CONFIRMADO, ENTREGADO o CANCELADO"
+    varchar modalidad "RETIRO o ENVIO"
+    varchar direccion
+    varchar nota
+    timestamptz creado
+  }
+
+  items_pedido {
+    int id PK
+    int pedido_id FK
+    int producto_id FK
+    int cantidad "mayor que 0"
+    numeric precio_unitario "precio al momento de comprar"
+  }
+
+  usuarios ||--o{ productos : "publica (productor_id)"
+  usuarios ||--o{ pedidos : "compra (comprador_id)"
+  usuarios ||--o{ pedidos : "vende (productor_id)"
+  categorias ||--o{ productos : "clasifica"
+  pedidos ||--o{ items_pedido : "contiene"
+  productos ||--o{ items_pedido : "aparece en"
