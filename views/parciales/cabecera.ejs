@@ -1,10 +1,13 @@
+<% const fijo = typeof temaFijo !== 'undefined' ? temaFijo : null; -%>
 <!doctype html>
-<html lang="es"><head>
+<html lang="es" data-tema="<%= fijo || 'oscuro' %>"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
+<% if (!fijo) { %><script>try{if(localStorage.getItem('tema')==='claro'){document.documentElement.dataset.tema='claro';document.documentElement.style.colorScheme='light'}}catch(e){}</script><% } %>
 <title><%= typeof titulo !== 'undefined' ? titulo + ' · ' : '' %>Mercado Chacarero</title>
 <link rel="icon" type="image/png" href="/img/favicon.png">
 <link rel="stylesheet" href="/css/app.css">
+<% if (!fijo) { %><script src="/js/tema.js" defer></script><% } %>
 <% if (typeof extraHead !== 'undefined') { %><%- extraHead %><% } %>
 </head><body class="<%= typeof clase !== 'undefined' ? clase : '' %>">
 <header class="top"><div class="wrap">
@@ -24,6 +27,12 @@
     <% if (usuario) { %>
       <form method="post" action="/salir" style="display:inline"><button>Salir (<%= usuario.usuario %>)</button></form>
     <% } else { %><a class="<%= a('/ingresar') %>" href="/ingresar">Ingresar</a><% } %>
+    <% if (!fijo) { %>
+    <button type="button" class="tema" id="tema" aria-pressed="false" aria-label="Tema claro" title="Cambiar entre tema claro y oscuro">
+      <svg class="sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+      <svg class="luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"/></svg>
+    </button>
+    <% } %>
   </nav>
 </div></header>
 <main><div class="wrap">

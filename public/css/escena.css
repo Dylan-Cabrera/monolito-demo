@@ -18,7 +18,7 @@ body.con-escena .top{position:relative;z-index:5}
 
 /* Portada */
 .portada{position:fixed;left:0;right:0;bottom:0;z-index:2;padding:0 0 clamp(24px,6vh,64px);pointer-events:none;
-  background:linear-gradient(to top,rgba(16,35,43,.95) 30%,rgba(16,35,43,0))}
+  background:linear-gradient(to top,rgba(var(--velo-rgb),.95) 30%,rgba(var(--velo-rgb),0))}
 .portada .wrap{pointer-events:auto}
 .portada h1{font-size:clamp(3rem,10vw,8.5rem);font-stretch:75%;font-weight:800;line-height:.88;letter-spacing:-.02em;margin:0 0 .25em;max-width:9ch}
 .portada p{font-size:clamp(1rem,1.6vw,1.25rem);color:var(--suave);max-width:46ch;margin:0 0 22px}
@@ -70,5 +70,10 @@ body.con-escena .top{position:relative;z-index:5}
   radial-gradient(circle at 74% 66%,rgba(255,180,50,.4),rgba(255,180,50,0) 35%),
   linear-gradient(#0f1419 0%,#1a2332 35%,#2d3f52 70%,#3d5166 100%)}
 .portada.lateral{top:0;bottom:0;display:flex;align-items:flex-end;
-  background:linear-gradient(90deg,rgba(15,20,25,.96) 0%,rgba(15,20,25,.80) 40%,rgba(15,20,25,0) 65%)}
-@media (max-width:900px){.portada.lateral{background:linear-gradient(to top,rgba(15,20,25,.97) 45%,rgba(15,20,25,0) 75%)}}
+  background:linear-gradient(90deg,rgba(var(--velo-rgb),.96) 0%,rgba(var(--velo-rgb),.80) 40%,rgba(var(--velo-rgb),0) 65%)}
+@media (max-width:900px){.portada.lateral{background:linear-gradient(to top,rgba(var(--velo-rgb),.97) 45%,rgba(var(--velo-rgb),0) 75%)}}
+
+/* Portada en tema claro: cielo de mediodía sobre el monte */
+:root[data-tema="claro"] .lienzo.cielo{background:
+  radial-gradient(circle at 74% 30%,rgba(255,252,232,.95),rgba(255,248,214,.45) 9%,rgba(255,248,214,0) 26%),
+  linear-gradient(#4f9fdc 0%,#7dbbe8 38%,#b9dcf3 70%,#e8efe6 92%,#efe6cf 100%)}

@@ -29,8 +29,9 @@ export function crearHornero(contenedor) {
   const camara = new THREE.PerspectiveCamera(32, ancho() / alto(), 0.1, 200);
   const camBase = new THREE.Vector3(0.8, 2.6, 16), mira = new THREE.Vector3(0, 1.75, 0);
 
-  // Luz de amanecer: sol cálido detrás a la derecha + cielo frío
-  escena.add(new THREE.HemisphereLight(0xbfd6dc, 0x4a3526, 1.25));
+  // Tema oscuro: sol cálido y bajo detrás a la derecha, cielo frío. Tema claro: sol alto de mediodía.
+  const cieloLuz = new THREE.HemisphereLight(0xbfd6dc, 0x4a3526, 1.25);
+  escena.add(cieloLuz);
   const sol = new THREE.DirectionalLight(0xffc98a, 2.6);
   sol.position.set(6, 7, -3);
   sol.castShadow = true;
@@ -183,7 +184,25 @@ export function crearHornero(contenedor) {
   const nPolvo = 160, polvo = new Float32Array(nPolvo * 3);
   for (let i = 0; i < nPolvo; i++) polvo.set([(Math.random() - 0.5) * 16, Math.random() * 7 - 2, (Math.random() - 0.5) * 8 - 1], i * 3);
   const geoPolvo = new THREE.BufferGeometry(); geoPolvo.setAttribute('position', new THREE.BufferAttribute(polvo, 3));
-  escena.add(new THREE.Points(geoPolvo, new THREE.PointsMaterial({ color: 0xffd9a0, size: 0.045, transparent: true, opacity: 0.7, depthWrite: false })));
+  const matPolvo = new THREE.PointsMaterial({ color: 0xffd9a0, size: 0.045, transparent: true, opacity: 0.7, depthWrite: false });
+  escena.add(new THREE.Points(geoPolvo, matPolvo));
+
+  // ---------- Ambiente según el tema ----------
+  const AMBIENTE = {
+    oscuro: { niebla: [0x2b4a52, 18, 60], cielo: [0xbfd6dc, 0x4a3526, 1.25], sol: [0xffc98a, 2.6, 6, 7, -3], relleno: [0x9cc3cf, 1.25], polvo: [0xffd9a0, 0.7] },
+    claro: { niebla: [0xc4def0, 22, 80], cielo: [0xe4f2ff, 0x8a7356, 1.7], sol: [0xfff3dc, 3.2, 2.5, 11, 5], relleno: [0xcfe6f5, 0.9], polvo: [0xffffff, 0.35] },
+  };
+  function ambientar() {
+    const a = AMBIENTE[document.documentElement.dataset.tema === 'claro' ? 'claro' : 'oscuro'];
+    escena.fog.color.setHex(a.niebla[0]); escena.fog.near = a.niebla[1]; escena.fog.far = a.niebla[2];
+    cieloLuz.color.setHex(a.cielo[0]); cieloLuz.groundColor.setHex(a.cielo[1]); cieloLuz.intensity = a.cielo[2];
+    sol.color.setHex(a.sol[0]); sol.intensity = a.sol[1]; sol.position.set(a.sol[2], a.sol[3], a.sol[4]);
+    relleno.color.setHex(a.relleno[0]); relleno.intensity = a.relleno[1];
+    matPolvo.color.setHex(a.polvo[0]); matPolvo.opacity = a.polvo[1];
+  }
+  ambientar();
+  const vigiaTema = new MutationObserver(ambientar);
+  vigiaTema.observe(document.documentElement, { attributes: true, attributeFilter: ['data-tema'] });
 
   // ---------- Guion del ave ----------
   // idle: mira alrededor; canta: abre el pico y suelta notas; salta: arco entre posaderos; asoma: mete la cabeza en el nido
@@ -281,7 +300,7 @@ export function crearHornero(contenedor) {
   camara.position.copy(camBase);
   requestAnimationFrame(cuadro);
 
-  return { destruir() { cancelAnimationFrame(id); ro.disconnect(); removeEventListener('pointermove', alMover); renderer.dispose(); contenedor.innerHTML = ''; } };
+  return { destruir() { cancelAnimationFrame(id); ro.disconnect(); vigiaTema.disconnect(); removeEventListener('pointermove', alMover); renderer.dispose(); contenedor.innerHTML = ''; } };
 }
 
 export function hayWebGL() {
