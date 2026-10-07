@@ -13,7 +13,7 @@
       <% if (p.puntos) { %><ul><% p.puntos.forEach(x => { %><li><%= x %></li><% }) %></ul><% } %>
       <% if (p.codigo) { %><p>Carpeta: <span class="ruta-codigo"><%= p.codigo %></span></p><% } %>
       <% if (p.fases) { %><ul class="fases"><% p.fases.forEach((f, k) => { %><li data-fase="<%= k %>"><%= f %></li><% }) %></ul><% } %>
-      <% if (p.demo) { %><div class="demo"><% p.demo.forEach(([t, u]) => { %><a class="btn sec" href="<%= u %>" target="_blank" rel="noopener"><%= t %></a><% }) %></div><% } %>
+      <% if (p.demo) { %><div class="demo"><% p.demo.forEach(([t, u]) => { %><a class="btn" href="<%= u %>"><%= t %></a><% }) %></div><% } %>
       <% if (p.vivo === 'pid') { %><p class="vivo" style="margin-top:14px">En vivo: esta página la sirve el proceso <b>PID <span data-vivo="pid"><%= pid %></span></b>. El mismo que atiende el catálogo, los pedidos y los reportes.</p><% } %>
       <% if (p.vivo === 'numeros') { %><div class="vivo"><p style="margin:0 0 8px">En vivo, desde PostgreSQL:</p><div class="nums">
         <div><b data-vivo="productores"><%= pulso.productores %></b>productores</div>

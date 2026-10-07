@@ -31,11 +31,6 @@ const PASOS = [
     texto: 'Laura, de Formosa capital, le compra mandioca a don Ramón de Ibarreta. Seguí la luz.',
     fases: ['Laura toca "Enviar pedido"', 'La ruta POST /carrito/confirmar lo recibe', 'El servicio de Pedidos abre una transacción', 'PostgreSQL descuenta stock y guarda el pedido', 'Todo salió bien: COMMIT. Si algo falla: ROLLBACK', 'La vista EJS arma la página Mis compras', 'Laura ve su pedido, en milisegundos'],
     escena: { camara: 'recorrido', flujo: null, explotar: 0.6, etiquetas: ['capas', 'navegador', 'db', 'modulos'], foco: [], recorrido: true, orbita: false } },
-  { parte: 4, titulo: 'Demo en vivo',
-    texto: 'Lo que viste en 3D, ahora funcionando. La app y esta guía las atiende el mismo proceso.',
-    demo: [['Ingresar como Laura (compradora)', '/ingresar?sig=/productos'], ['Ver el catálogo', '/productos'], ['Panel de don Ramón (productor)', '/panel/ventas'], ['Tablero provincial (admin)', '/tablero']],
-    vivo: 'pid',
-    escena: { camara: 'demo', explotar: 0, recorrido: false, etiquetas: ['proceso'], foco: [], orbita: true } },
   { parte: 5, titulo: 'Por qué elegimos un monolito',
     texto: 'Para un equipo chico y un problema que recién empieza, lo simple gana.',
     puntos: ['Se desarrolla y se prueba en una sola compu', 'Un único despliegue: un servidor alcanza', 'Las transacciones son naturales: una sola base', 'Rápido: los módulos se llaman sin red de por medio'],
@@ -48,5 +43,10 @@ const PASOS = [
     texto: 'No elegimos la arquitectura más moderna: elegimos la justa. Cuando Mercado Chacarero crezca, sus módulos ya están listos para separarse. Hoy, lo importante es que la mandioca de Ibarreta llegue directo a tu mesa.',
     vivo: 'numeros',
     escena: { camara: 'cierre', flujo: 'directo', limites: false, etiquetas: ['pines', 'rios', 'proceso'], foco: [], orbita: true } },
+  { parte: 5, titulo: 'Demo en vivo',
+    texto: 'Lo que viste en 3D, ahora funcionando. La app y esta guía las atiende el mismo proceso.',
+    demo: [['Ir a la página de inicio', '/']],
+    vivo: 'pid',
+    escena: { camara: 'demo', explotar: 0, recorrido: false, etiquetas: ['proceso'], foco: [], orbita: true } },
 ];
 module.exports = { PARTES, PASOS };
