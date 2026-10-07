@@ -5,7 +5,7 @@
   <p style="margin:6px 0 12px"><b>Total <%= pesos(p.total) %></b>. <%= C.MODALIDADES[p.modalidad] %><%= p.direccion ? ', ' + p.direccion : '' %>.
   Contacto: <%= modo === 'compra' ? p.tel_productor : p.tel_comprador %><%= p.nota ? '. Nota: ' + p.nota : '' %></p>
   <div class="fila">
-  <% const boton = (estado, texto, clase) => `<form method="post" action="/pedidos/${p.id}/estado"><input type="hidden" name="estado" value="${estado}"><button class="btn chico ${clase}">${texto}</button></form>`; %>
+  <% const boton = (estado, texto, clase) => `<form method="post" action="/pedidos/${p.id}/estado">${campoCsrf()}<input type="hidden" name="estado" value="${estado}"><button class="btn chico ${clase}">${texto}</button></form>`; %>
   <% if (modo === 'venta' && p.estado === 'PENDIENTE') { %><%- boton('CONFIRMADO', 'Confirmar', 'ok') %><% } %>
   <% if (modo === 'venta' && p.estado === 'CONFIRMADO') { %><%- boton('ENTREGADO', 'Marcar entregado', 'ok') %><% } %>
   <% if (['PENDIENTE','CONFIRMADO'].includes(p.estado)) { %><%- boton('CANCELADO', 'Cancelar pedido', 'mal') %><% } %>

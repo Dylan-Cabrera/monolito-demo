@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const PgSession = require('connect-pg-simple')(session);
+const { csrfSync } = require('csrf-sync');
 const { pool } = require('./db/pool');
 const C = require('./constantes');
 const { cargarUsuario } = require('./middlewares/auth');
@@ -45,6 +46,16 @@ app.use((req, res, next) => {
 });
 app.use(cargarUsuario);
 
+// Protección CSRF: el token vive en la sesión (la misma Postgres) y viaja en un campo oculto de cada form POST.
+// Va después de flash y cargarUsuario porque la página de error 403 usa esos datos para dibujar la cabecera.
+const csrf = csrfSync({ getTokenFromRequest: (req) => req.body?._csrf, size: 32 });
+app.use((req, res, next) => {
+  // Recién al dibujar un formulario se genera el token: una página sin forms no crea sesión.
+  res.locals.campoCsrf = () => `<input type="hidden" name="_csrf" value="${csrf.generateToken(req)}">`;
+  next();
+});
+app.use(csrf.csrfSynchronisedProtection);
+
 // --- Módulos internos: se llaman por código, no por red ---
 app.use(require('./modulos/guia/rutas'));
 app.use(require('./modulos/usuarios/rutas'));
@@ -55,6 +66,8 @@ app.use(require('./modulos/reportes/rutas'));
 app.use((req, res) => res.status(404).render('error', { codigo: 404, mensaje: 'Esa página no existe.' }));
 app.use((err, req, res, next) => {
   if (err.status !== 403) console.error(err);
+  // Token CSRF ausente o vencido (por ejemplo, un formulario abierto antes de ingresar)
+  if (err.code === 'EBADCSRFTOKEN') err = { status: 403, message: 'El formulario venció o no es válido. Volvé atrás, recargá la página y probá de nuevo.' };
   res.status(err.status || 500).render('error', { codigo: err.status || 500, mensaje: err.status ? err.message : 'Algo falló en el servidor.' });
 });
 

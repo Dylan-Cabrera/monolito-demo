@@ -7,7 +7,7 @@
   <td><%= pesos(p.precio) %> / <%= C.UNIDADES[p.unidad] %></td><td><%= p.stock %></td>
   <td><%= p.activo ? 'Publicado' : 'Oculto' %></td>
   <td><div class="fila"><a class="btn sec chico" href="/panel/productos/<%= p.id %>/editar">Editar</a>
-    <form method="post" action="/panel/productos/<%= p.id %>/borrar" onsubmit="return confirm('¿Eliminar este producto?')"><button class="btn mal chico">Eliminar</button></form></div></td>
+    <form method="post" action="/panel/productos/<%= p.id %>/borrar" onsubmit="return confirm('¿Eliminar este producto?')"><%- campoCsrf() %><button class="btn mal chico">Eliminar</button></form></div></td>
 </tr><% }) %></table></div>
 <% } else { %><p class="vacio">Todavía no publicaste nada. Cargá tu primer producto y aparece en el catálogo al instante.</p><% } %>
 <%- include('../parciales/pie') %>

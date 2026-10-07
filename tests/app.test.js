@@ -25,9 +25,23 @@ before(async () => {
 });
 after(() => pool.end());
 
+// Token CSRF del form POST que apunta a `accion` (un form sin action envía a la misma página).
+function tokenDe(html, accion) {
+  const forms = (html.match(/<form\b[\s\S]*?<\/form>/g) || []).filter((x) => /^<form[^>]*method="post"/.test(x));
+  const form = forms.find((x) => x.includes(`action="${accion}"`)) || forms.find((x) => !/^<form[^>]*action=/.test(x));
+  const token = form && (form.match(/name="_csrf" value="([^"]+)"/) || [])[1];
+  assert.ok(token, `no hay un form POST hacia ${accion} con token CSRF`);
+  return token;
+}
+// Envía un formulario como lo haría el navegador: primero pide la página que lo contiene y manda su token.
+async function enviar(ag, pagina, accion, datos = {}) {
+  const html = (await ag.get(pagina)).text;
+  return ag.post(accion).type('form').send({ ...datos, _csrf: tokenDe(html, accion) });
+}
+
 async function ingresar(usuario) {
   const ag = request.agent(app);
-  const r = await ag.post('/ingresar').type('form').send({ usuario, clave: 'clave1234', sig: '/productos' });
+  const r = await enviar(ag, '/ingresar', '/ingresar', { usuario, clave: 'clave1234', sig: '/productos' });
   assert.equal(r.status, 302);
   return ag;
 }
@@ -40,14 +54,25 @@ test('portada, guía y catálogo responden', async () => {
 });
 
 test('clave incorrecta no ingresa', async () => {
-  const r = await request(app).post('/ingresar').type('form').send({ usuario: 'laura', clave: 'mal' });
+  const r = await enviar(request.agent(app), '/ingresar', '/ingresar', { usuario: 'laura', clave: 'mal' });
   assert.equal(r.status, 401);
+});
+
+test('CSRF: un POST sin token o con token ajeno se rechaza con 403', async () => {
+  const ag = request.agent(app);
+  await ag.get('/productos'); // la sesión ya tiene su token
+  const sin = await ag.post(`/carrito/agregar/${prod}`).type('form').send({ cantidad: 1 });
+  assert.equal(sin.status, 403);
+  assert.match(sin.text, /El formulario venció/);
+  assert.doesNotMatch((await ag.get('/carrito')).text, /Mandioca/); // no se agregó nada
+  const falso = await ag.post('/ingresar').type('form').send({ usuario: 'laura', clave: 'clave1234', _csrf: 'inventado' });
+  assert.equal(falso.status, 403);
 });
 
 test('comprar descuenta stock en una transacción', async () => {
   const ag = await ingresar('laura');
-  await ag.post(`/carrito/agregar/${prod}`).type('form').send({ cantidad: 4 });
-  const r = await ag.post('/carrito/confirmar').type('form').send({ modalidad: 'RETIRO' });
+  await enviar(ag, '/productos', `/carrito/agregar/${prod}`, { cantidad: 4 });
+  const r = await enviar(ag, '/carrito', '/carrito/confirmar', { modalidad: 'RETIRO' });
   assert.equal(r.headers.location, '/mis-compras');
   assert.equal(await stock(), 6);
   const { rows } = await pool.query('SELECT estado FROM pedidos');
@@ -56,10 +81,10 @@ test('comprar descuenta stock en una transacción', async () => {
 
 test('sin stock suficiente: se rechaza y no se guarda nada', async () => {
   const ag = await ingresar('laura');
-  await ag.post(`/carrito/agregar/${prod}`).type('form').send({ cantidad: 6 });
+  await enviar(ag, '/productos', `/carrito/agregar/${prod}`, { cantidad: 6 });
   await pool.query('UPDATE productos SET stock = 2 WHERE id=$1', [prod]); // alguien compró en el medio
   const antes = (await pool.query('SELECT COUNT(*)::int n FROM pedidos')).rows[0].n;
-  const r = await ag.post('/carrito/confirmar').type('form').send({ modalidad: 'RETIRO' });
+  const r = await enviar(ag, '/carrito', '/carrito/confirmar', { modalidad: 'RETIRO' });
   assert.equal(r.headers.location, '/carrito');
   assert.equal((await pool.query('SELECT COUNT(*)::int n FROM pedidos')).rows[0].n, antes);
   assert.equal(await stock(), 2);
@@ -78,9 +103,9 @@ test('falla a mitad de la transacción: ROLLBACK deshace lo ya hecho', async () 
 test('transición inválida rechazada y cancelar repone stock', async () => {
   const id = (await pool.query('SELECT id FROM pedidos LIMIT 1')).rows[0].id;
   const ramon = await ingresar('ramon');
-  await ramon.post(`/pedidos/${id}/estado`).type('form').send({ estado: 'ENTREGADO' }); // de PENDIENTE no se puede
+  await enviar(ramon, '/panel/ventas', `/pedidos/${id}/estado`, { estado: 'ENTREGADO' }); // de PENDIENTE no se puede
   assert.equal((await pool.query('SELECT estado FROM pedidos WHERE id=$1', [id])).rows[0].estado, 'PENDIENTE');
-  await ramon.post(`/pedidos/${id}/estado`).type('form').send({ estado: 'CANCELADO' });
+  await enviar(ramon, '/panel/ventas', `/pedidos/${id}/estado`, { estado: 'CANCELADO' });
   assert.equal(await stock(), 10);
 });
 
@@ -94,7 +119,7 @@ test('permisos: comprador no publica, productor no edita lo ajeno', async () => 
 
 test('borrar un producto con ventas lo oculta en lugar de borrarlo', async () => {
   const ramon = await ingresar('ramon');
-  await ramon.post(`/panel/productos/${prod}/borrar`);
+  await enviar(ramon, '/panel/productos', `/panel/productos/${prod}/borrar`);
   const { rows } = await pool.query('SELECT activo FROM productos WHERE id=$1', [prod]);
   assert.equal(rows[0].activo, false);
 });

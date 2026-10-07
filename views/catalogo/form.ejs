@@ -2,6 +2,7 @@
 <h1><%= d.id ? 'Editar producto' : 'Publicar producto' %></h1>
 <% const err = (k) => errores[k] ? `<span class="err">${errores[k]}</span>` : ''; %>
 <form method="post" class="form caja">
+  <%- campoCsrf() %>
   <div class="campo"><label for="nombre">Nombre</label><input id="nombre" name="nombre" value="<%= d.nombre || '' %>" required><%- err('nombre') %></div>
   <div class="campo"><label for="cat">Categoría</label><select id="cat" name="categoria_id"><option value="">Elegí…</option>
     <% categorias.forEach(c => { %><option value="<%= c.id %>" <%= d.categoria_id == c.id ? 'selected' : '' %>><%= c.nombre %></option><% }) %></select><%- err('categoria_id') %></div>

@@ -2,6 +2,7 @@
 <h1>Crear cuenta</h1>
 <% const err = (k) => errores[k] ? `<span class="err">${errores[k]}</span>` : ''; %>
 <form method="post" class="form caja">
+  <%- campoCsrf() %>
   <div class="campo"><span style="font-weight:600">¿Qué sos?</span><div class="radios">
     <label><input type="radio" name="rol" value="COMPRADOR" <%= d.rol !== 'PRODUCTOR' ? 'checked' : '' %>> Comprador</label>
     <label><input type="radio" name="rol" value="PRODUCTOR" <%= d.rol === 'PRODUCTOR' ? 'checked' : '' %>> Productor</label></div><%- err('rol') %></div>

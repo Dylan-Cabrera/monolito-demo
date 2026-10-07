@@ -25,7 +25,7 @@
     <% } %>
     <a class="<%= a('/carrito') %>" href="/carrito">Carrito (<%= carritoCantidad %>)</a>
     <% if (usuario) { %>
-      <form method="post" action="/salir" style="display:inline"><button>Salir (<%= usuario.usuario %>)</button></form>
+      <form method="post" action="/salir" style="display:inline"><%- campoCsrf() %><button>Salir (<%= usuario.usuario %>)</button></form>
     <% } else { %><a class="<%= a('/ingresar') %>" href="/ingresar">Ingresar</a><% } %>
     <% if (!fijo) { %>
     <button type="button" class="tema" id="tema" aria-pressed="false" aria-label="Tema claro" title="Cambiar entre tema claro y oscuro">

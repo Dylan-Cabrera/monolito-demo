@@ -8,6 +8,7 @@
   <p class="origen"><b><%= p.emprendimiento %></b> de <%= p.productor %>, <%= p.localidad %>. Contacto: <%= p.telefono %></p>
   <% if (p.stock > 0) { %>
   <form method="post" action="/carrito/agregar/<%= p.id %>" class="fila">
+    <%- campoCsrf() %>
     <input type="number" name="cantidad" value="1" min="1" max="<%= p.stock %>" style="width:86px" aria-label="Cantidad">
     <button class="btn">Agregar al carrito</button></form>
   <% } else { %><p class="vacio">Sin stock por ahora.</p><% } %>

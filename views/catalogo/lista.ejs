@@ -19,6 +19,7 @@
     <div class="origen">Quedan <%= p.stock %></div>
     <div class="precio"><%= pesos(p.precio) %> <small>por <%= C.UNIDADES[p.unidad] %></small></div>
     <form method="post" action="/carrito/agregar/<%= p.id %>" class="fila">
+      <%- campoCsrf() %>
       <input type="number" name="cantidad" value="1" min="1" max="<%= p.stock %>" style="width:76px" aria-label="Cantidad de <%= p.nombre %>">
       <button class="btn chico">Agregar al carrito</button></form>
   </article>
